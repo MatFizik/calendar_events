@@ -16,22 +16,32 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  String startDate = '';
-  String? endDate;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
+
+  String? endDateString;
+  String startDateString = '';
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is PickerDateRange) {
-        startDate = DateFormat('dd-MM-yyyy').format(args.value.startDate);
-        endDate = DateFormat('dd-MM-yyyy')
+        startDate = args.value.startDate;
+        endDate = args.value.endDate ?? args.value.startDate;
+
+        startDateString = DateFormat('dd-MM-yyyy').format(args.value.startDate);
+        endDateString = DateFormat('dd-MM-yyyy')
             .format(args.value.endDate ?? args.value.startDate);
       }
     });
   }
 
   void onEvent() {
+    startDateString = DateFormat('dd-MM-yyyy').format(startDate);
     BlocProvider.of<CalendarBloc>(context).add(
-      CalendarEvent.getCalendarEvents(startDate, endDate),
+      CalendarEvent.getCalendarEvents(
+        startDateString,
+        endDateString,
+      ),
     );
   }
 
@@ -102,12 +112,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 if (err.message?.startDate != null) {
                   AppSnackBar.showSnackBar(
                     context,
-                    err.message?.startDate?.first ?? 'Error',
+                    'Start date: ${err.message?.startDate?.first}',
                   );
                 } else if (err.message?.endDate != null) {
                   AppSnackBar.showSnackBar(
                     context,
-                    err.message?.endDate?.first ?? 'Error',
+                    'End date: ${err.message?.endDate?.first}',
                   );
                 }
               } else {
@@ -127,12 +137,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 onSelectionChanged: _onSelectionChanged,
                 selectionMode: DateRangePickerSelectionMode.range,
                 initialSelectedRange: PickerDateRange(
-                  DateTime.now().subtract(
-                    const Duration(days: 4),
-                  ),
-                  DateTime.now().add(
-                    const Duration(days: 3),
-                  ),
+                  startDate,
+                  endDate,
                 ),
               ),
               const SizedBox(height: 32),
