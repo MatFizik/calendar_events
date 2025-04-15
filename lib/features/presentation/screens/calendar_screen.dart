@@ -2,6 +2,7 @@ import 'package:calendar_event/common/loading_overlay/loading_overlay.dart';
 import 'package:calendar_event/common/snackbar/app_snackbar.dart';
 import 'package:calendar_event/features/data/models/calendar_response_error_model.dart';
 import 'package:calendar_event/features/presentation/bloc/calendar_bloc.dart';
+import 'package:calendar_event/features/presentation/widget/event_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -61,22 +62,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: events.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Text(events[index].eventName.toString()),
-                                  const SizedBox(height: 8),
-                                  Text(events[index].description.toString()),
-                                  const SizedBox(height: 8),
-                                  Text(events[index].date.toString()),
-                                  const SizedBox(height: 32),
-                                ],
-                              );
-                            },
+                        const Text(
+                          'Events',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        const SizedBox(height: 24),
+                        Expanded(
+                          child: events.isNotEmpty
+                              ? ListView.builder(
+                                  itemCount: events.length,
+                                  itemBuilder: (context, index) {
+                                    return EventTile(
+                                      title: events[index].eventName.toString(),
+                                      description:
+                                          events[index].description.toString(),
+                                      date: events[index].date.toString(),
+                                    );
+                                  },
+                                )
+                              : const Center(
+                                  child: Text(
+                                    'No events',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
                         )
                       ],
                     ),
@@ -126,7 +138,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () => onEvent(),
-                child: const Text('Отправить'),
+                child: const Text('Send'),
               )
             ],
           ),
