@@ -13,9 +13,7 @@ class _CalendarService implements CalendarService {
     this._dio, {
     this.baseUrl,
     this.errorLogger,
-  }) {
-    baseUrl ??= 'https://test-task-app-alpha.vercel.app/';
-  }
+  });
 
   final Dio _dio;
 
@@ -43,7 +41,7 @@ class _CalendarService implements CalendarService {
     )
         .compose(
           _dio.options,
-          'api/test-task',
+          '',
           queryParameters: queryParameters,
           data: _data,
         )
